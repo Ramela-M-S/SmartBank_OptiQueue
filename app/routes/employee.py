@@ -1,5 +1,5 @@
 from app.models import Token,db
-from flask import render_template,session, redirect
+from flask import render_template,session, redirect, flash
 
 
 def employee(app):
@@ -9,6 +9,7 @@ def employee(app):
     def employee_dashboard():
         if session.get("role") != "employee":
             return redirect("/login")
+        flash("Welcome Staff!","success")
         services = db.session.query(Token.service_type).distinct().all()
 
         return render_template("employee_services.html", services=services)
@@ -39,7 +40,7 @@ def employee(app):
 
         next_token.status = "serving"
         next_token.assigned_employee_id = employee_id
-
+        flash("Next Person Called","success")
         db.session.commit()
 
         return {"token": next_token.token_number}
@@ -57,5 +58,6 @@ def employee(app):
 
         db.session.delete(current)
         db.session.commit()
+        flash("User Deleted Successfully!","warning")
 
         return {"message": "Token completed"}

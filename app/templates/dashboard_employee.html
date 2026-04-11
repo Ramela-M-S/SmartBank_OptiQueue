@@ -12,7 +12,6 @@
         margin: auto;
     }
 
-    /* TOP HEADER CARD */
     .service-header {
         background: linear-gradient(135deg, #e8f1ff, #ffffff);
         border-radius: 18px;
@@ -35,7 +34,6 @@
         margin-top: 8px;
     }
 
-    /* BUTTONS */
     .action-btn {
         background: #021c38;
         color: white;
@@ -51,7 +49,6 @@
         transform: translateY(-2px);
     }
 
-    /* QUEUE LIST */
     .queue-card {
         background: white;
         border-radius: 16px;
@@ -91,7 +88,6 @@
 
 <div class="service-wrapper">
 
-    <!-- TOP CARD -->
     <div class="service-header">
         <div class="service-title">🏦 Service: {{ service }}</div>
 
@@ -106,13 +102,12 @@
         </div>
     </div>
 
-    <!-- BUTTONS -->
     <div class="text-center mb-3">
         <button class="action-btn" onclick="callNext()">▶ Call Next</button>
         <button class="action-btn" onclick="markDone()">✔ Mark Done</button>
     </div>
 
-    <!-- QUEUE -->
+   
     <div class="queue-card">
 
         <h5 class="mb-3">Queue List</h5>

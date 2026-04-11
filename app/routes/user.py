@@ -17,7 +17,7 @@ def user(app):
     @app.route("/user/dashboard")
     def user_dashboard():
 
-        # block non-users
+      
         if session.get("role") != "user":
             return redirect("/login")
 
@@ -55,7 +55,7 @@ def user(app):
         db.session.add(token)
         db.session.commit()
 
-        # 👥 people ahead ONLY for same service
+
         people_ahead = Token.query.filter_by(
             service_type=service,
             status="waiting"

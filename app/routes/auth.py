@@ -1,9 +1,11 @@
 from flask import render_template, request, redirect, session, flash, url_for
 from app.forms import RegisterForm
 from app.models import User
-from flask import flash
+from flask import flash,redirect, url_for
 from app.models import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import logout_user, login_required
+
 
 def auth(app):
     with app.app_context():
@@ -43,7 +45,7 @@ def auth(app):
             # create user
             user = User(
                 username=form.username.data,
-                role="user"   # FORCE USER ROLE
+                role="user"   
             )
             user.set_password(form.password.data)
 
@@ -94,3 +96,10 @@ def auth(app):
 
 
         return render_template("login.html")
+    
+    @app.route("/logout")
+    @login_required
+    def logout():
+        logout_user()
+        flash("You have been logged out successfully", "success")
+        return redirect(url_for("login"))

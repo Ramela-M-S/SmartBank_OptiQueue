@@ -16,7 +16,7 @@
             background: #f4f7fb;
         }
 
-        /* NAVBAR */
+      
         .navbar {
             background: #0b1f3a;
             padding: 14px 28px;
@@ -35,16 +35,9 @@
             color: white !important;
         }
 
-        .hero-img {
-    width: 100%;
-    height: 420px;
-    object-fit: cover;
-    display: block;
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
-}
+     
 
-/* PAGE WRAP */
+
 .wrap {
     max-width: 1100px;
     margin: auto;
@@ -56,7 +49,7 @@
     font-weight: bold;
 }
 
-/* GLASS EFFECT CARD */
+
 .glass-card {
     background: rgba(255,255,255,0.9);
     backdrop-filter: blur(10px);
@@ -65,7 +58,7 @@
     padding: 30px;
 }
 
-/* ROLE CARD */
+
 .role-card {
     border-radius: 18px;
     padding: 25px;
@@ -89,7 +82,49 @@
     border-radius: 12px;
     font-weight: 600;
 }
+.container-fluid {
+    padding: 0 !important;
+}
+.flash-container {
+    position: fixed;
+    top: 70px; /* below navbar */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 90%;
+    max-width: 500px;
+}
 
+.flash-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 500;
+    animation: slideDown 0.4s ease;
+}
+
+
+.alert-success { background-color: #28a745; }
+.alert-danger { background-color: #dc3545; }
+.alert-warning { background-color: #ffc107; color: #000; }
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: inherit;
+    cursor: pointer;
+}
+
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
     </style>
 
     {% block head %}{% endblock %}
@@ -102,20 +137,18 @@
 
     <div class="container-fluid">
 
-        <!-- Brand -->
         <a class="navbar-brand fw-bold" href="/">
             🏦 SmartBank Queue
         </a>
 
-        <!-- Right side links -->
         <div class="ms-auto d-flex align-items-center gap-4">
 
             <a class="nav-link d-inline text-dark" href="/">Home</a>
-            <a class="nav-link d-inline text-dark" href="#">User</a>
-            <a class="nav-link d-inline text-dark" href="#">Admin</a>
-            <a class="nav-link d-inline text-dark" href="#">Staff</a>
+            <a class="nav-link d-inline text-dark" href="{{url_for('user_dashboard')}}">User</a>
+            <a class="nav-link d-inline text-dark" href="{{url_for('admin_dashboard')}}">Admin</a>
+            <a class="nav-link d-inline text-dark" href="{{url_for('employee_dashboard')}}">Staff</a>
 
-            <a class="nav-link d-inline text-danger fw-semibold" href="#">
+            <a class="nav-link d-inline text-danger fw-semibold" href="{{url_for('employee_dashboard')}}">
                 Logout
             </a>
 
@@ -123,8 +156,38 @@
 
     </div>
 </nav>
+<div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message alert alert-{{ category }}">
+                    <span>{{ message }}</span>
+                    <button class="close-btn">&times;</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
 
 {% block content %}{% endblock %}
 
 </body>
 </html>
+
+<script>
+    
+    setTimeout(() => {
+        document.querySelectorAll('.flash-message').forEach(msg => {
+            msg.style.opacity = '0';
+            msg.style.transition = '0.5s';
+            setTimeout(() => msg.remove(), 500);
+        });
+    }, 3000);
+
+ 
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            this.parentElement.remove();
+        });
+    });
+</script>

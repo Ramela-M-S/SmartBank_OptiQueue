@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect
+from flask import render_template, session, redirect, flash
 from app.models import db, Token
 from sqlalchemy import func
 from datetime import datetime, date
@@ -13,22 +13,19 @@ def admin(app):
         if session.get("role") != "admin":
             return redirect("/login")
 
-        # 📊 ALL TOKENS
+        flash("Welcome Admin!","success")
         tokens = Token.query.order_by(Token.created_at.desc()).all()
 
-        # 📊 TOTAL TOKENS TODAY
         today = date.today()
 
         total_tokens = Token.query.filter(
             func.date(Token.created_at) == today
         ).count()
 
-        # 👥 ACTIVE QUEUE (waiting + serving)
         active_queue = Token.query.filter(
             Token.status.in_(["waiting", "serving"])
         ).count()
 
-        # ⏳ AVERAGE WAIT TIME (simple version)
         waiting_tokens = Token.query.filter(Token.status == "waiting").all()
 
         avg_wait_time = 0
@@ -39,13 +36,11 @@ def admin(app):
             )
             avg_wait_time = round(total_wait / len(waiting_tokens) / 60, 2)  # in minutes
 
-        # 📦 SERVICE STATS
         withdraw = Token.query.filter_by(service_type="Withdraw").count()
         deposit = Token.query.filter_by(service_type="Deposit").count()
         account = Token.query.filter_by(service_type="Account Help").count()
         loan = Token.query.filter_by(service_type="Jewel Loan").count()
 
-        # 📋 RECENT TOKENS (last 10)
         recent = Token.query.order_by(Token.created_at.desc()).limit(10).all()
 
         return render_template(
