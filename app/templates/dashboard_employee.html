@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #f5f7fb;
+    }
+
+    .service-wrapper {
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    /* TOP HEADER CARD */
+    .service-header {
+        background: linear-gradient(135deg, #e8f1ff, #ffffff);
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .service-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #021c38;
+    }
+
+    .now-serving {
+        font-size: 28px;
+        font-weight: bold;
+        color: #0d6efd;
+        margin-top: 8px;
+    }
+
+    /* BUTTONS */
+    .action-btn {
+        background: #021c38;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin: 5px;
+        transition: 0.3s;
+    }
+
+    .action-btn:hover {
+        background: #06335f;
+        transform: translateY(-2px);
+    }
+
+    /* QUEUE LIST */
+    .queue-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .queue-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .badge-waiting {
+        background: #ffc107;
+        color: black;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+
+    .badge-serving {
+        background: #0d6efd;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+
+    .badge-done {
+        background: #198754;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+
+</style>
+
+<div class="service-wrapper">
+
+    <!-- TOP CARD -->
+    <div class="service-header">
+        <div class="service-title">🏦 Service: {{ service }}</div>
+
+        {% set current = queue | selectattr("status", "equalto", "serving") | list %}
+
+        <div class="now-serving">
+            {% if current %}
+                {{ current[0].token_number }}
+            {% else %}
+                -
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="text-center mb-3">
+        <button class="action-btn" onclick="callNext()">▶ Call Next</button>
+        <button class="action-btn" onclick="markDone()">✔ Mark Done</button>
+    </div>
+
+    <!-- QUEUE -->
+    <div class="queue-card">
+
+        <h5 class="mb-3">Queue List</h5>
+
+        {% for t in queue %}
+
+        <div class="queue-item">
+            <div>
+                <b>{{ t.token_number }}</b>
+                <small class="text-muted">({{ t.service_type }})</small>
+            </div>
+
+            {% if t.status == "waiting" %}
+                <span class="badge-waiting">Waiting</span>
+
+            {% elif t.status == "serving" %}
+                <span class="badge-serving">Serving</span>
+
+            {% else %}
+                <span class="badge-done">Done</span>
+            {% endif %}
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script>
+
+function callNext() {
+    fetch("/employee/call-next/{{ service }}", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(() => location.reload());
+}
+
+function markDone() {
+    fetch("/employee/mark-done/{{ service }}", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(() => location.reload());
+}
+
+</script>
+
+{% endblock %}

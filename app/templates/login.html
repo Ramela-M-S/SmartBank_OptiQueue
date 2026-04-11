@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Smart Bank Queue System{% endblock %}
+
+{% block content %}
+
+<div style="display:flex; justify-content:center; align-items:center; min-height:70vh;">
+
+    <div style="
+        background:white;
+        padding:40px;
+        border-radius:20px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.08);
+        width:100%;
+        max-width:420px;
+        border:1px solid #eef2f7;
+    ">
+
+        <!-- TITLE -->
+        <div style="text-align:center; margin-bottom:25px;">
+            <h2 style="font-weight:800;">🔐 Login</h2>
+            <p style="font-size:13px; color:#64748b;">
+                Access Smart Bank Queue System
+            </p>
+        </div>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="
+                        background:#fee2e2;
+                        color:#991b1b;
+                        padding:10px;
+                        border-radius:10px;
+                        margin-bottom:15px;
+                        font-size:13px;
+                        text-align:center;
+                    ">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- FORM -->
+        <form method="POST">
+
+            <!-- USERNAME -->
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:600; font-size:13px;">Username</label>
+                <input type="text" name="username" required
+                    style="
+                        padding:10px;
+                        border-radius:10px;
+                        border:1px solid #e5e7eb;
+                        width:100%;
+                        margin-top:5px;
+                    ">
+            </div>
+
+            <!-- PASSWORD -->
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:600; font-size:13px;">Password</label>
+                <input type="password" name="password" required
+                    style="
+                        padding:10px;
+                        border-radius:10px;
+                        border:1px solid #e5e7eb;
+                        width:100%;
+                        margin-top:5px;
+                    ">
+            </div>
+
+            <!-- ROLE SELECT -->
+            <div style="margin-bottom:20px;">
+                <label style="font-weight:600; font-size:13px;">Login As</label>
+                <select name="role" required
+                    style="
+                        padding:10px;
+                        border-radius:10px;
+                        border:1px solid #e5e7eb;
+                        width:100%;
+                        margin-top:5px;
+                    ">
+                    <option value="user">User</option>
+                    <option value="employee">Employee</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
+            <!-- SUBMIT -->
+            <button type="submit" class="btn btn-primary" style="
+                width:100%;
+                padding:10px;
+                border-radius:10px;
+                font-weight:600;
+            ">
+                Login
+            </button>
+
+        </form>
+
+        <!-- REGISTER LINK -->
+        <p style="text-align:center; margin-top:15px; font-size:13px;">
+            New user?
+            <a href="/register" style="color:#2563eb; text-decoration:none;">
+                Create account
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

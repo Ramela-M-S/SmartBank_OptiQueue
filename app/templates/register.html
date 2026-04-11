@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Register | Smart Bank Queue System{% endblock %}
+
+{% block content %}
+
+<style>
+.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+</style>
+
+<div style="display:flex; justify-content:center; padding:20px;">
+
+    <div style="
+        background:white;
+        padding:35px;
+        border-radius:20px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.08);
+        width:100%;
+        max-width:550px;
+        border:1px solid #eef2f7;
+    ">
+
+        <!-- TITLE -->
+        <div style="text-align:center; margin-bottom:25px;">
+            <h2 style="font-weight:800;">📝 Create Account</h2>
+            <p style="font-size:13px; color:#64748b;">
+                Join Smart Bank Queue System
+            </p>
+        </div>
+
+        <!-- FORM -->
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <!-- USERNAME -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    Username
+                </label>
+                {{ form.username(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    Email
+                </label>
+                {{ form.email(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- PHONE -->
+            <div class="form-group">
+
+    <label class="required" style="font-weight:600; font-size:13px;">
+        Phone Number
+    </label>
+
+    <!-- SINGLE COMBINED FIELD -->
+    <div style="
+        display:flex;
+        margin-top:6px;
+        border:1px solid #e5e7eb;
+        border-radius:10px;
+        overflow:hidden;
+        background:white;
+    ">
+
+        <!-- Country Code -->
+        <select name="country_code"
+            style="
+                border:none;
+                outline:none;
+                padding:10px;
+                background:#f8fafc;
+                font-size:13px;
+                width:110px;
+                cursor:pointer;
+            ">
+            <option value="+91">🇮🇳 +91</option>
+            <option value="+1">+1</option>
+            <option value="+44">+44</option>
+        </select>
+
+        <!-- Divider -->
+        <div style="width:1px; background:#e5e7eb;"></div>
+
+        <!-- Phone Input -->
+        <input
+            type="text"
+            name="phone"
+            placeholder="Enter phone number"
+            required
+            style="
+                flex:1;
+                border:none;
+                outline:none;
+                padding:10px 12px;
+                font-size:13px;
+            "
+        >
+
+    </div>
+</div>
+
+            <!-- ACCOUNT NUMBER -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    Account Number
+                </label>
+                {{ form.account_number(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- BANK NAME -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    Bank Name
+                </label>
+                {{ form.bank_name(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- BRANCH -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    Branch
+                </label>
+                {{ form.branch(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- IFSC -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    IFSC Code
+                </label>
+                {{ form.ifsc_code(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    Password
+                </label>
+                {{ form.password(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="form-group">
+                <label class="required" style="font-weight:600; font-size:13px;">
+                    Confirm Password
+                </label>
+                {{ form.confirm_password(class="form-control", style="padding:10px; border-radius:10px;") }}
+            </div>
+
+            <!-- ROLE (HIDDEN FIXED USER) -->
+            <input type="hidden" name="role" value="user">
+
+            <!-- SUBMIT -->
+            <button type="submit" class="btn btn-primary" style="
+                width:100%;
+                padding:12px;
+                border-radius:10px;
+                font-weight:600;
+                margin-top:10px;
+            ">
+                Register
+            </button>
+
+        </form>
+
+        <!-- LOGIN LINK -->
+        <p style="text-align:center; margin-top:15px; font-size:13px;">
+            Already have an account?
+            <a href="/login" style="color:#2563eb; text-decoration:none;">
+                Login
+            </a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

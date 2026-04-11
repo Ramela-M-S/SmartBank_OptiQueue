@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    display:flex;
+    justify-content:center;
+    padding:30px;
+">
+
+<div style="width:100%; max-width:900px;">
+
+    <!-- HEADER -->
+    <div style="
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: rgb(30, 3, 3);
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+">
+        <h2>👤 Welcome {{ username }}</h2>
+        <p style="opacity:0.8;">Smart Banking Queue Dashboard</p>
+    </div>
+
+    <!-- TOP CARDS -->
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:15px;
+        margin-bottom:20px;
+    ">
+
+        <div class="stat-card">
+            <h2 id="token">---</h2>
+            <p>Your Token</p>
+        </div>
+
+        <div class="stat-card">
+            <h2 id="ahead">0</h2>
+            <p>People Ahead</p>
+        </div>
+
+        <div class="stat-card">
+            <h2 id="time">0</h2>
+            <p>Wait Time (min)</p>
+        </div>
+
+    </div>
+
+    <!-- BOOK TOKEN CARD -->
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:18px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.06);
+    ">
+
+        <h3>🎟️ Book Token</h3>
+
+        <p style="color:#64748b;">Select banking service</p>
+
+        <label>Service Type *</label>
+
+        <select id="service" style="
+            width:100%;
+            padding:12px;
+            border-radius:10px;
+            border:1px solid #e5e7eb;
+            margin-top:8px;
+        ">
+            <option>Deposit</option>
+            <option>Withdrawal</option>
+            <option>Account Help</option>
+            <option>Jewel Loan</option>
+            <option>Account Opening</option>
+        </select>
+
+        <button onclick="getToken()" style="
+            width:100%;
+            margin-top:15px;
+            padding:12px;
+            border-radius:10px;
+            background:#2563eb;
+            color:white;
+            border:none;
+            font-weight:600;
+        ">
+            🎟️ Generate Token
+        </button>
+
+    </div>
+
+</div>
+</div>
+
+<style>
+.stat-card{
+    background:white;
+    padding:18px;
+    border-radius:16px;
+    text-align:center;
+    box-shadow:0 8px 25px rgba(0,0,0,0.06);
+}
+.stat-card h2{
+    margin:0;
+    color:#0f172a;
+}
+.stat-card p{
+    margin:5px 0 0;
+    font-size:13px;
+    color:#64748b;
+}
+</style>
+<script>
+function getToken() {
+
+    let service = document.getElementById("service").value;
+
+    fetch("/user/get-token", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "service=" + encodeURIComponent(service)
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        // update UI
+        document.getElementById("token").innerText = data.token;
+        document.getElementById("ahead").innerText = data.people_ahead;
+        document.getElementById("time").innerText = data.wait_time;
+
+    })
+    .catch(err => {
+        console.log("Error:", err);
+        alert("Something went wrong!");
+    });
+}
+</script>
+{% endblock %}

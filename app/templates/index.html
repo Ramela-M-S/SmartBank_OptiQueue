@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- SAME ORIGINAL IMAGE (FULL WIDTH) -->
+<div class="container-fluid p-0">
+    <img class="hero-img"
+         src="{{ url_for('static', filename='images/Queue.jpeg') }}">
+</div>
+<div class="wrap">
+
+    <!-- MAIN CARD -->
+    <div class="glass-card text-center">
+
+        <h2 class="fw-bold">🏦 Smart Bank Queue System</h2>
+        <p class="text-muted">Skip the queue, not your turn</p>
+
+        <!-- ROLE CARDS -->
+        <div class="row mt-4 g-4">
+
+            <div class="col-md-4">
+                <div class="role-card">
+                    <div class="role-icon">👤</div>
+                    <h5>User</h5>
+                    <p class="text-muted">Book tokens & track queue</p>
+                    <a href="/login?role=user" class="btn btn-primary btn-soft w-100">Login</a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="role-card">
+                    <div class="role-icon">👨‍💼</div>
+                    <h5>Staff</h5>
+                    <p class="text-muted">Manage customer queue</p>
+                    <a href="/login?role=staff" class="btn btn-success btn-soft w-100">Login</a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="role-card">
+                    <div class="role-icon">👑</div>
+                    <h5>Admin</h5>
+                    <p class="text-muted">System control & analytics</p>
+                    <a href="/login?role=admin" class="btn btn-dark btn-soft w-100">Login</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- REGISTER CARD -->
+    <div class="glass-card text-center mt-4">
+
+        <h5 class="fw-bold">New here?</h5>
+        <p class="text-muted">Create account to start using queue system</p>
+
+        <a href="/register" class="btn btn-primary btn-soft px-4">
+            Register as User
+        </a>
+
+    </div>
+
+</div>
+<style>
+.hero-img {
+    width: 100%;
+    height: 60vh;
+    object-fit: contain; /* full image visible */
+    display: block;
+}
+body {
+    margin: 0;
+}
+    
+</style>
+{% endblock %}
