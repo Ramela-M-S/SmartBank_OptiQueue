@@ -47,6 +47,12 @@ All screenshots are stored in: `static/screenshots/`
 
 ---
 
+### Login
+
+![Login Page](static/screenshots/Login%20Page.png)
+
+---
+
 ### Admin Panel
 
 ![Admin Page](static/screenshots/Admin%20Page.png)
