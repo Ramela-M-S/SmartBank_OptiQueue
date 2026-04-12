@@ -1,6 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, SelectField,EmailField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+import re
+def strong_password(form, field):
+    password = field.data
+
+    if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$', password):
+        raise ValidationError(
+            "Password must be 8+ characters and include letters, numbers, and symbols"
+        )
 
 class RegisterForm(FlaskForm):
 
@@ -9,10 +17,7 @@ class RegisterForm(FlaskForm):
         validators=[DataRequired(), Length(min=3, max=50)]
     )
 
-    email = StringField(
-        "Email",
-        validators=[DataRequired(), Email()]
-    )
+    email = EmailField(validators=[DataRequired(), Email(message="Enter a valid email")])
 
     phone = StringField(
         "Phone Number",
@@ -41,7 +46,7 @@ class RegisterForm(FlaskForm):
 
     password = PasswordField(
         "Password",
-        validators=[DataRequired(), Length(min=4)]
+        validators=[DataRequired(), strong_password]
     )
 
     confirm_password = PasswordField(

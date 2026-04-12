@@ -5,7 +5,8 @@ from flask import flash,redirect, url_for
 from app.models import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import logout_user, login_required
-
+from email_validator import validate_email, EmailNotValidError
+import re
 
 def auth(app):
     with app.app_context():
@@ -32,21 +33,23 @@ def auth(app):
     
     @app.route("/register", methods=["GET", "POST"])
     def register():
+
         form = RegisterForm()
 
         if form.validate_on_submit():
 
-            # check duplicate user
-            existing_user = User.query.filter_by(username=form.username.data).first()
+            username=form.username.data.strip()
+            email=form.email.data.strip()
+            existing_user = User.query.filter_by(username=username).first()
             if existing_user:
                 flash("Username already exists!", "danger")
-                return redirect(url_for("register"))
-
-            # create user
+                return render_template("register.html", form=form)
             user = User(
-                username=form.username.data,
-                role="user"   
+                username=username,
+                
+                role="user"
             )
+
             user.set_password(form.password.data)
 
             db.session.add(user)
@@ -54,9 +57,9 @@ def auth(app):
 
             flash("Registration successful! Please login.", "success")
             return redirect(url_for("login"))
-
+        
         return render_template("register.html", form=form)
-    
+
     @app.route("/login", methods=["GET", "POST"])
     def login():
         if request.method == "POST":

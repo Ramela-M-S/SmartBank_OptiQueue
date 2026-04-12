@@ -45,15 +45,20 @@
                     Username
                 </label>
                 {{ form.username(class="form-control", style="padding:10px; border-radius:10px;") }}
+                {% for error in form.username.errors %}
+                    <small style="color:red;">{{ error }}</small>
+                {% endfor %}
             </div>
 
          
             <div class="form-group">
-                <label class="required" style="font-weight:600; font-size:13px;">
-                    Email
-                </label>
-                {{ form.email(class="form-control", style="padding:10px; border-radius:10px;") }}
-            </div>
+    <label class="required">Email</label>
+    {{ form.email(class="form-control", style="padding:10px; border-radius:10px;") }}
+
+    {% for error in form.email.errors %}
+        <small style="color:red;">{{ error }}</small>
+    {% endfor %}
+</div>
 
        
             <div class="form-group">
@@ -119,6 +124,9 @@
                     Bank Name
                 </label>
                 {{ form.bank_name(class="form-control", style="padding:10px; border-radius:10px;") }}
+                {% for error in form.account_number.errors %}
+    <small style="color:red;">{{ error }}</small>
+{% endfor %}
             </div>
 
          
@@ -138,20 +146,24 @@
             </div>
 
            
-            <div class="form-group">
-                <label class="required" style="font-weight:600; font-size:13px;">
-                    Password
-                </label>
-                {{ form.password(class="form-control", style="padding:10px; border-radius:10px;") }}
-            </div>
+           
 
             <div class="form-group">
-                <label class="required" style="font-weight:600; font-size:13px;">
-                    Confirm Password
-                </label>
-                {{ form.confirm_password(class="form-control", style="padding:10px; border-radius:10px;") }}
-            </div>
+    <label class="required">Password</label>
+    {{ form.password(class="form-control", style="padding:10px; border-radius:10px;") }}
 
+    {% for error in form.password.errors %}
+        <small style="color:red;">{{ error }}</small>
+    {% endfor %}
+</div>
+            <div class="form-group">
+    <label class="required">Confirm Password</label>
+    {{ form.confirm_password(class="form-control", style="padding:10px; border-radius:10px;") }}
+
+    {% for error in form.confirm_password.errors %}
+        <small style="color:red;">{{ error }}</small>
+    {% endfor %}
+</div>
             <input type="hidden" name="role" value="user">
 
             <!-- SUBMIT -->
