@@ -18,7 +18,7 @@ The **Smart Bank Queue Optimization System** helps banks manage customer queues 
 * CSS
 * Bootstrap
 * JavaScript
-* React.js
+
 
 ### Backend
 
