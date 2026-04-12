@@ -7,8 +7,7 @@ def generate_service_token(service_type):
     today = date.today()
 
     count = Token.query.filter(
-        Token.service_type == service_type,
-        db.func.date(Token.created_at) == today
+        Token.service_type == service_type
     ).count()
 
     return count + 1

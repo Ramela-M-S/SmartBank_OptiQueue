@@ -18,9 +18,7 @@ def admin(app):
 
         today = date.today()
 
-        total_tokens = Token.query.filter(
-            func.date(Token.created_at) == today
-        ).count()
+        total_tokens = Token.query.count()
 
         active_queue = Token.query.filter(
             Token.status.in_(["waiting", "serving"])
