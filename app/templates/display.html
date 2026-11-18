@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Live Bank Queue Display{% endblock %}
+
+{% block content %}
+<div class="container py-4 text-center">
+
+    <!-- HEADER -->
+    <div style="background:#021c38; color:white; padding:25px; border-radius:20px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.15); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+        <div class="text-start">
+            <h1 class="fw-bold mb-1">🏛️ SmartBank OptiQueue Live Board</h1>
+            <p class="text-light mb-0">Please proceed when your token is called</p>
+        </div>
+        
+        <!-- AUDIO PERMISSION BUTTON (Bypasses Browser Autoplay Block) -->
+        <button id="audio-btn" onclick="enableAudio()" class="btn btn-warning fw-bold px-4 py-2" style="border-radius:12px;">
+            🔊 Click to Enable Sound
+        </button>
+    </div>
+
+    <!-- MAIN "NOW SERVING" HERO BOARD -->
+    <div style="background:white; border-radius:24px; padding:40px; box-shadow:0 15px 40px rgba(0,0,0,0.08); margin-bottom:30px; border:3px solid #2563eb;">
+        <span class="badge bg-danger fs-6 px-3 py-2 mb-2">● LIVE NOW SERVING</span>
+        <h1 id="now-serving-token" style="font-size: 5rem; font-weight:900; color:#1e3a8a; letter-spacing:2px; margin:10px 0;">
+            {% if active_serving %}{{ active_serving[-1].token_number }}{% else %}---{% endif %}
+        </h1>
+        <h3 id="now-serving-counter" class="text-primary fw-bold">
+            {% if active_serving %}Counter {{ active_serving[-1].assigned_employee_id }} ({{ active_serving[-1].service_type }}){% else %}Waiting for next customer...{% endif %}
+        </h3>
+    </div>
+
+    <!-- RECENTLY CALLED TOKENS -->
+        <!-- 2-COLUMN SECTION: ACTIVE COUNTERS & UPCOMING TOKENS -->
+    <div class="row g-4 text-start mb-4">
+        
+        <!-- COLUMN 1: ACTIVE COUNTERS -->
+        <div class="col-md-7">
+            <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+                <h4 class="fw-bold mb-3 text-dark">🏢 Counter Status</h4>
+                <div class="row g-2" id="active-counters-list">
+                    {% for t in active_serving %}
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border bg-light d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary">{{ t.service_type }}</span>
+                                <h4 class="fw-bold my-1 text-dark">{{ t.token_number }}</h4>
+                            </div>
+                            <span class="badge bg-success fs-6">Counter {{ t.assigned_employee_id }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No counters currently serving.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 2: UPCOMING (NEXT IN LINE) -->
+        <div class="col-md-5">
+            <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+                <h4 class="fw-bold mb-3 text-dark">⏳ Next in Line</h4>
+                <div class="d-flex flex-column gap-2" id="upcoming-list">
+                    {% for t in upcoming_tokens %}
+                    <div class="p-2 px-3 rounded-3 border d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-dark fs-5">{{ t.token_number }}</span>
+                        <span class="badge bg-secondary">{{ t.service_type }}</span>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Waiting queue is empty.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Socket.IO Client -->
+<!-- Socket.IO Client -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+    const socket = io();
+    let audioCtx = null;
+    window.currentUtterance = null;
+
+    function getAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        return audioCtx;
+    }
+
+    function playChime() {
+        try {
+            const ctx = getAudioContext();
+            const now = ctx.currentTime;
+            
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = "sine";
+            osc1.frequency.setValueAtTime(587.33, now);
+            gain1.gain.setValueAtTime(0.3, now);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.5);
+
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = "sine";
+            osc2.frequency.setValueAtTime(440.00, now + 0.25);
+            gain2.gain.setValueAtTime(0.3, now + 0.25);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.25);
+            osc2.stop(now + 0.8);
+        } catch(e) {
+            console.error("Audio error:", e);
+        }
+    }
+
+    function enableAudio() {
+        getAudioContext();
+        playChime();
+        
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            window.currentUtterance = new SpeechSynthesisUtterance("Audio announcements enabled.");
+            window.currentUtterance.rate = 0.9;
+            window.currentUtterance.lang = 'en-US';
+            window.speechSynthesis.speak(window.currentUtterance);
+        }
+
+        const btn = document.getElementById("audio-btn");
+        btn.className = "btn btn-success fw-bold px-4 py-2";
+        btn.innerText = "Sound Enabled";
+    }
+
+    function announceToken(token, counter) {
+        playChime();
+
+        setTimeout(() => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+
+                const spokenToken = token.replace('-', ' ').split('').join(' ');
+                window.currentUtterance = new SpeechSynthesisUtterance(`Token ${spokenToken}, please proceed to ${counter}`);
+                window.currentUtterance.rate = 0.85;
+                window.currentUtterance.pitch = 1.0;
+                window.currentUtterance.lang = 'en-US';
+
+                window.speechSynthesis.speak(window.currentUtterance);
+            }
+        }, 500);
+    }
+
+    socket.on("token_called", function(data) {
+        const tokenElem = document.getElementById("now-serving-token");
+        const counterElem = document.getElementById("now-serving-counter");
+        if (tokenElem) tokenElem.innerText = data.token;
+        if (counterElem) counterElem.innerText = `${data.counter} (${data.service})`;
+
+        announceToken(data.token, data.counter);
+    });
+
+        // Announce
+        announceToken(data.token, data.counter);
+    });
+</script>
+{% endblock %}

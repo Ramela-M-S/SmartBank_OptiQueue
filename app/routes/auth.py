@@ -1,12 +1,14 @@
 from flask import render_template, request, redirect, session, flash, url_for
 from app.forms import RegisterForm
-from app.models import User
+from app.models import *
 from flask import flash,redirect, url_for
 from app.models import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import logout_user, login_required
 from email_validator import validate_email, EmailNotValidError
 import re
+from app import limiter
+
 
 def auth(app):
     with app.app_context():
@@ -60,15 +62,15 @@ def auth(app):
         
         return render_template("register.html", form=form)
 
+    
     @app.route("/login", methods=["GET", "POST"])
+    @limiter.limit("5 per minute", methods=["POST"])
     def login():
         if request.method == "POST":
 
             username = request.form.get("username")
             password = request.form.get("password")
             role = request.form.get("role")
-            print(username, password, role)
-            
           
             user = User.query.filter_by(username=username).first()
 
@@ -77,7 +79,6 @@ def auth(app):
                     flash("Role mismatch", "danger")
                     return redirect(url_for("login"))
 
-                # STORE SESSION
                 session["user_id"] = user.id
                 session["role"] = user.role
                 session["username"] = user.username
@@ -101,8 +102,27 @@ def auth(app):
         return render_template("login.html")
     
     @app.route("/logout")
-    @login_required
+
     def logout():
-        logout_user()
+        session.clear()
         flash("You have been logged out successfully", "success")
         return redirect(url_for("login"))
+
+    @app.route("/display")
+    def lobby_display():
+        active_serving = Token.query.filter_by(status="serving").all()
+        upcoming_tokens = Token.query.filter_by(status="waiting")\
+                                     .order_by(Token.created_at.asc())\
+                                     .limit(6).all()
+        # Waiting count by service
+        services = ["Deposit", "Withdrawal", "Account Help", "Jewel Loan", "Account Opening"]
+        queue_counts = {
+            s: Token.query.filter_by(service_type=s, status="waiting").count()
+            for s in services
+        }
+        return render_template(
+            "display.html",
+            active_serving=active_serving,
+            upcoming_tokens=upcoming_tokens,
+            queue_counts=queue_counts
+        )

@@ -143,18 +143,35 @@ function callNext() {
     fetch("/employee/call-next/{{ service }}", {
         method: "POST"
     })
-    .then(res => res.json())
-    .then(() => location.reload());
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.message || "Failed to call next");
+        }
+        location.reload();
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        location.reload();
+    });
 }
 
 function markDone() {
     fetch("/employee/mark-done/{{ service }}", {
         method: "POST"
     })
-    .then(res => res.json())
-    .then(() => location.reload());
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.message || "Failed to mark done");
+        }
+        location.reload();
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        location.reload();
+    });
 }
-
 </script>
 
 {% endblock %}

@@ -24,7 +24,7 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 ">
         <h2>👤 Welcome {{ username }}</h2>
-        <p style="opacity:0.8;">Smart Banking Queue Dashboard</p>
+        <p style="opacity:0.8;"> SmartBank OptiQueue Dashboard</p>
     </div>
 
     <div style="
@@ -34,22 +34,27 @@
         margin-bottom:20px;
     ">
 
+       
+
         <div class="stat-card">
-            <h2 id="token">---</h2>
+            <h2 id="token">{{ active_token.token_number if active_token else "---" }}</h2>
             <p>Your Token</p>
         </div>
 
         <div class="stat-card">
-            <h2 id="ahead">0</h2>
+            <h2 id="ahead">{{ people_ahead if active_token else 0 }}</h2>
             <p>People Ahead</p>
         </div>
 
         <div class="stat-card">
-            <h2 id="time">0</h2>
+            <h2 id="time">{{ wait_time if active_token else 0 }}</h2>
             <p>Wait Time (min)</p>
         </div>
 
-    </div>
+        <div class="stat-card">
+            <h2 id="counters">{{ active_tellers if active_token else 1 }}</h2>
+            <p>Active Counters Open</p>
+        </div>
 
     <div style="
         background:white;
@@ -77,6 +82,21 @@
             <option>Jewel Loan</option>
             <option>Account Opening</option>
         </select>
+
+        
+
+        <label style="margin-top:10px;">Customer Category *</label>
+        <select id="priority" style="
+            width:100%;
+            padding:12px;
+            border-radius:10px;
+            border:1px solid #e5e7eb;
+            margin-top:8px;
+        ">
+            <option value="2">General Customer</option>
+            <option value="1">👴 Senior Citizen / Specially Abled (Priority)</option>
+        </select>
+
 
         <button onclick="getToken()" style="
             width:100%;
@@ -116,28 +136,30 @@
 </style>
 <script>
 function getToken() {
-
     let service = document.getElementById("service").value;
+    let priority = document.getElementById("priority").value;
 
     fetch("/user/get-token", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "service=" + encodeURIComponent(service)
+        body: "service=" + encodeURIComponent(service) + "&priority=" + encodeURIComponent(priority)
     })
-    .then(res => res.json())
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.error || "Failed to generate token");
+        }
+        return data;
+    })
     .then(data => {
-
-        // update UI
         document.getElementById("token").innerText = data.token;
         document.getElementById("ahead").innerText = data.people_ahead;
         document.getElementById("time").innerText = data.wait_time;
-
     })
     .catch(err => {
-        console.log("Error:", err);
-        alert("Something went wrong!");
+        alert(err.message);
     });
 }
 </script>

@@ -67,3 +67,16 @@ class Token(db.Model):
 
     served_at = db.Column(db.DateTime, nullable=True)
     completed_at = db.Column(db.DateTime, nullable=True)
+    priority = db.Column(db.Integer, default=2)
+
+class DailySequence(db.Model):
+    __tablename__ = "daily_sequence"
+
+    id = db.Column(db.Integer, primary_key=True)
+    service_type = db.Column(db.String(50), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    last_number = db.Column(db.Integer, default=0, nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint("service_type", "date", name="uq_service_date"),
+    )

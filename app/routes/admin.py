@@ -2,18 +2,14 @@ from flask import render_template, session, redirect, flash
 from app.models import db, Token
 from sqlalchemy import func
 from datetime import datetime, date
-
+from app.decorators import role_required
 
     
 def admin(app):
-
     @app.route("/admin")
+    @role_required("admin")
     def admin_dashboard():
-
-        if session.get("role") != "admin":
-            return redirect("/login")
-
-        flash("Welcome Admin!","success")
+        flash("Welcome Admin!", "success")
         tokens = Token.query.order_by(Token.created_at.desc()).all()
 
         today = date.today()
